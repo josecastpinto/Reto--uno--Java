@@ -2,107 +2,83 @@ import java.util.Scanner;
 
 public class App {
 
-    //Elementos necesarios para todas las acciones.
-    static Scanner entrada = new Scanner(System.in);
-    
-    static double[] distancias = {78.0, 628.0, 1256.0};
-    static String[]planetas = {"Mercurio","venus","Marte","Júpiter","Saturno","Urano","Neptuno"};
-    static String[] naves = {"Exploradora", "carga pesada", "Velocidad máxima"};
-    static double[] velocidades = {20000.0, 15000.0, 30000};
-    
-    public static void main(String[] args) throws Exception {
-        
-        int opcion;
-        do{
-            mostrarMenu();
-            opcion = entrada.nextInt();
-            switch (opcion) {
-                case 1:
-                    seleccionarPlaneta();
-                    break;
-                case 2: 
-                    seleccionarNave();
-                    break;
-                default:
-                    break;
-            }
+    static Scanner scanner = new Scanner(System.in);
 
-        }while(opcion != 4);
+    // Función para seleccionar un planeta
+    public static int seleccionarPlaneta() {
+        System.out.println("Selecciona un planeta:");
+        System.out.println("1. Mercurio (78 millones de km)");
+        System.out.println("2. Venus (41 millones de km)");
+        System.out.println("3. Tierra (0 km)");
+        System.out.println("4. Marte (62 millones de km)");
+        System.out.println("5. Júpiter (628 millones de km)");
+        System.out.println("6. Saturno (1275 millones de km)");
+        System.out.println("7. Urano (2870 millones de km)");
+        System.out.println("8. Neptuno (4300 millones de km)");
 
-
+        int opcionPlaneta = scanner.nextInt();
+        return opcionPlaneta; // Retorna la opción seleccionada
     }
 
-    
+    // Función para seleccionar una nave
+    public static int seleccionarNave() {
+        System.out.println("Selecciona un tipo de nave:");
+        System.out.println("1. Exploradora (20000 km/h)");
+        System.out.println("2. Carga pesada (15000 km/h)");
+        System.out.println("3. Velocidad máxima (30000 km/h)");
 
-    public static void mostrarMenu(){
-        System.out.println("\n---Menú Principal---");
-        System.out.println("1. Seleccionar un planeta de destino");
-        System.out.println("2. Seleccionar una nave espacial");
-        System.out.println("3. Iniciar la simulación del vuelo");
-        System.out.println("4. Salir");
-        System.out.println("Por favor, elige una opción: ");
+        int opcionNave = scanner.nextInt();
+        return opcionNave; // Retorna la opción seleccionada
     }
 
-    
+    // Función para calcular el tiempo de vuelo
+    public static double calcularTiempoDeVuelo(double distancia, double velocidad) {
+        return distancia / velocidad;
+    }
 
-    public static void seleccionarPlaneta(){
+    // Función principal que une todo
+    public static void main(String[] args) {
+        // Definir las distancias entre la Tierra y otros planetas (en millones de km)
+        double[] distancias = {78.0, 41.0, 62.0, 628.0, 1275.0, 2870.0, 4300.0}; // distancias en millones de km
+
+        // Definir las velocidades de las naves en km/h
+        double[] velocidades = {20000.0, 15000.0, 30000.0}; // velocidades de las naves en km/h
+
+        // Selección del planeta
+        int opcionPlaneta = seleccionarPlaneta();
+        if (opcionPlaneta < 1 || opcionPlaneta > 8) {
+            System.out.println("Opción inválida para el planeta.");
+            return; // Salir si se elige una opción inválida
+        }
         
-        System.out.println("1. Mercurio");
-        System.out.println("2. Venus");
-        System.out.println("3. Marte");
-        System.out.println("4. Júpiter");
-        System.out.println("5. Saturno");
-        System.out.println("6. Urano");
-        System.out.println("7. Neptuno");
+        // Lista de planetas y sus nombres
+        String[] planetas = {"Mercurio", "Venus", "Tierra", "Marte", "Júpiter", "Saturno", "Urano", "Neptuno"};
+        String planetaSeleccionado = planetas[opcionPlaneta - 1]; // Elige el nombre del planeta
 
-        System.out.println("INGRESA UN NUMERO DE LA OPCION");
-        var opcion = entrada.nextInt();
-        if (opcion >= 1 && opcion <= 7) {
-            System.out.println("El planeta selccionado es: "+ planetas[opcion-1]);
-            
-        }else {
-            System.out.println("Opcion invalida");
+        double distancia = distancias[opcionPlaneta - 1] * 1000000; // Distancia correspondiente al planeta (convertido a km)
+
+        // Selección de la nave
+        int opcionNave = seleccionarNave();
+        if (opcionNave < 1 || opcionNave > 3) {
+            System.out.println("Opción inválida para la nave.");
+            return; // Salir si se elige una opción inválida
         }
 
+        // Lista de naves y sus nombres
+        String[] naves = {"Exploradora", "Carga pesada", "Velocidad máxima"};
+        String naveSeleccionada = naves[opcionNave - 1]; // Elige el nombre de la nave
 
-            
-        }
+        double velocidad = velocidades[opcionNave - 1]; // Velocidad correspondiente a la nave
 
-     
-            
+        // Calcular el tiempo de vuelo
+        double tiempoVuelo = calcularTiempoDeVuelo(distancia, velocidad);
         
+        // Convertir el tiempo de vuelo a días (aproximadamente)
+        double tiempoEnDias = tiempoVuelo / 24.0;
 
-        
-        
-            
-        
-      
-   
-    public static void distaciaTiempoViaje(){
-
+        // Mostrar el resultado
+        System.out.println("La nave seleccionada es: " + naveSeleccionada);
+        System.out.println("El tiempo de vuelo desde la Tierra hasta " + planetaSeleccionado + " es de: " 
+                           + tiempoVuelo + " horas, o aproximadamente " + tiempoEnDias + " días.");
     }
-    public static void seleccionarNave(){
-
-    }
-
-    public static void calcularRecursos(){
-
-    }
-    
-    
-
-    //Métodos auxiliares.
-    public static void imprimirPlanetas(){
-        
-
-    }
-
-    public static void lanzarEvento(){
-
-    }
-
-    public static void detenerNave(){
-
-    }
-
 }
