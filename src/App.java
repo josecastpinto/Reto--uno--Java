@@ -3,132 +3,204 @@ import java.util.Scanner;
 
 public class App {
 
-    static Scanner scanner = new Scanner(System.in);
+    static Scanner entrada = new Scanner(System.in);
+    static Random random = new Random();
 
-    // Función para seleccionar un planeta
-    public static int seleccionarPlaneta() {
-        System.out.println("Selecciona un planeta:");
-        System.out.println("1. Mercurio (78 millones de km)");
-        System.out.println("2. Venus (41 millones de km)");
-        System.out.println("3. Tierra (0 km)");
-        System.out.println("4. Marte (62 millones de km)");
-        System.out.println("5. Júpiter (628 millones de km)");
-        System.out.println("6. Saturno (1275 millones de km)");
-        System.out.println("7. Urano (2870 millones de km)");
-        System.out.println("8. Neptuno (4300 millones de km)");
+    static String[] planetas = {"1. MERCURIO", "2. VENUS", "3. MARTE", "4. JUPITER", "5. SATURNO", "6. URANO", "7. NEPTUNO"};
+    static double[] distancias = {91.7, 42.4, 78.3, 628.9, 1284.4, 2721.4, 4345.4};
 
-        return scanner.nextInt();
-    }
+    static String[] naves = {"1. EXPLORER", "2. CARGUERO", "3. SPEEDER"};
+    static double[] velocidad = {45000.0, 55000.0, 80000.0};
 
-    // Función para seleccionar una nave
-    public static int seleccionarNave() {
-        System.out.println("Selecciona un tipo de nave:");
-        System.out.println("1. Exploradora (20000 km/h)");
-        System.out.println("2. Carga pesada (15000 km/h)");
-        System.out.println("3. Velocidad máxima (30000 km/h)");
-
-        return scanner.nextInt();
-    }
-
-    // Función para calcular el tiempo de vuelo
-    public static double calcularTiempoDeVuelo(double distancia, double velocidad) {
-        return distancia / velocidad;
-    }
-
-    // Función para calcular el combustible necesario
-    public static double calcularCombustible(double distancia) {
-        return distancia / 10_000; // Ejemplo: se requiere 1 unidad de combustible por cada 10,000 km
-    }
-
-    // Función para simular eventos aleatorios
-    public static boolean eventoAleatorio(double progreso) {
-        Random random = new Random();
-        int probabilidad = random.nextInt(100);
-
-        // Eventos aleatorios con probabilidad basada en el progreso
-        if (probabilidad < 10) {
-            System.out.println("¡Evento aleatorio! Asteroides detectados, esquivando...");
-            return false; // Evento menor, no termina el viaje
-        } else if (probabilidad < 15) {
-            System.out.println("¡Falla en el sistema! Reparando...");
-            return false; // Evento mayor, pero se resuelve
-        }
-        return true; // No hay evento
-    }
-
-    // Monitorear el progreso del viaje
-    public static void monitorearViaje(double distancia, double velocidad, double combustible, double oxigeno) {
-        double tiempoTotal = distancia / velocidad; // Tiempo total en horas
-        double tiempoEnDias = tiempoTotal / 24.0;
-        double progreso = 0.0; // Porcentaje de progreso
-        double recursosTotales = combustible; // Simplificado: sólo combustible
-
-        System.out.println("\n¡Inicio del viaje!");
-
-        for (int hora = 1; hora <= tiempoTotal; hora++) {
-            // Calcular progreso
-            progreso = (hora / tiempoTotal) * 100;
-
-            // Reducir recursos
-            combustible -= 1; // Consumo por hora
-            oxigeno -= 0.5; // Oxígeno por hora
-
-            // Mostrar estado actual
-            System.out.printf("Progreso: %.2f%%, Combustible restante: %.2f, Oxígeno restante: %.2f, Horas restantes: %.2f\n",
-                              progreso, combustible, oxigeno, tiempoTotal - hora);
-
-            // Comprobar recursos
-            if (combustible <= 0 || oxigeno <= 0) {
-                System.out.println("¡Recursos agotados! El viaje no puede continuar.");
-                return;
-            }
-
-            // Evento aleatorio
-            if (!eventoAleatorio(progreso)) {
-                continue; // Resolver evento y continuar
-            }
-
-            // Simular el paso del tiempo (puedes añadir un delay real si lo deseas)
-        }
-
-        System.out.println("¡Has llegado a tu destino con éxito!");
-    }
+    static final double FACTOR_CONSUMO = 0.5;
+    public static double distanciaPlane;
+    public static double tiempoTranscurrido;
 
     public static void main(String[] args) {
-        // Datos de planetas y naves
-        double[] distancias = {78.0, 41.0, 62.0, 628.0, 1275.0, 2870.0, 4300.0}; // en millones de km
-        double[] velocidades = {20000.0, 15000.0, 30000.0}; // en km/h
-        String[] planetas = {"Mercurio", "Venus", "Tierra", "Marte", "Júpiter", "Saturno", "Urano", "Neptuno"};
-        String[] naves = {"Exploradora", "Carga pesada", "Velocidad máxima"};
+        int option;
+        do {
+            mostrarMenu();
+            option = entrada.nextInt();
 
-        // Selección de planeta
-        int opcionPlaneta = seleccionarPlaneta();
-        if (opcionPlaneta < 1 || opcionPlaneta > 8) {
-            System.out.println("Opción inválida para el planeta.");
-            return;
+            switch (option) {
+                case 1:
+                    iniciarSimulacion();
+                    break;
+                case 2:
+                    System.out.println("¡HASTA LUEGO!");
+                    break;
+                default:
+                    System.out.println("Ingrese una opción válida.");
+                    break;
+            }
+        } while (option != 2); // El bucle se repite hasta que el usuario elija la opción 2 (Salir)
+    }
+
+    // Mostrar menú
+    public static void mostrarMenu() {
+        System.out.println("\n //////////////////////////////////////////////////////////");
+        System.out.println("======BIENVENIDO A LA SIMULACION DE VIAJE INTERPLANETARIO=====");
+        System.out.println("//////////////////////////////////////////////////////////");
+        System.out.println("1. INICIAR SIMULACION");
+        System.out.println("2. SALIR");
+        System.out.print("POR FAVOR, ELIGE UNA OPCION: ");
+    }
+
+    // Iniciar simulación
+    public static void iniciarSimulacion() {
+        mostrarProgresoViaje();
+    }
+
+    // Seleccionar destino y distancia
+    public static double selecionarDestino() {
+        var option = 0;
+        do {
+            System.out.println("SELECCIONA TU DESTINO: ");
+            for (int i = 0; i < planetas.length; i++) {
+                System.out.println(planetas[i]);
+            }
+            System.out.print("Ingresa el número del planeta: ");
+            option = entrada.nextInt();
+            if (option >= 1 && option <= planetas.length) {
+                distanciaPlane = distancias[option - 1];
+                System.out.println("¡Excelente elección! Te diriges hacia: " + planetas[option - 1] + " a una distancia de: " + distanciaPlane + " millones de km.");
+            } else {
+                System.out.println("Opción no válida.");
+            }
+        } while (option < 1 || option > planetas.length);
+        return distanciaPlane;
+    }
+
+    // Seleccionar nave y velocidad
+    public static double navesVelocidad() {
+        var option = 0;
+        double velocidadNave = 0;
+        do {
+            for (int i = 0; i < naves.length; i++) {
+                System.out.println(naves[i]);
+            }
+            System.out.print("Ingresa el numero que correspanda a tu nave: ");
+            option = entrada.nextInt();
+            if (option >= 1 && option <= naves.length) {
+                velocidadNave = velocidad[option - 1];
+                System.out.println("Tu nave seleccionada es: " + naves[option - 1] + " a una velocidad de: " + velocidadNave + " km/h.");
+            } else {
+                System.out.println("Opción no válida.");
+            }
+        } while (option < 1 || option > naves.length); // Repetir hasta que el usuario elija una opción válida
+        return velocidadNave;
+    }
+
+    // Método para mostrar el progreso del viaje
+    public static double mostrarProgresoViaje() {
+        distanciaPlane = selecionarDestino();
+        double velocidadNave = navesVelocidad();
+
+        // Calcular el tiempo total de viaje en horas y luego en días
+        double tiempoViajeTotal = distanciaPlane * 1000000 / velocidadNave; // Convertimos a km y calculamos el tiempo en horas
+        double tiempoViajeTotalEnDias = tiempoViajeTotal / 24; // Convertimos horas a días
+
+        System.out.println("=====Comienza tu viaje. ====");
+        System.out.println("Distancia al destino: " + distanciaPlane + " millones de km");
+        System.out.println("Tiempo total de viaje: " + tiempoViajeTotalEnDias + " días");
+
+        //////////////////////////////////////////
+        ///
+        double totalOxigeno = 0;
+        double editCombustible = 0;
+
+        do {
+            System.out.println("INGRESA 1 PARA INGRESAR CANTIDAD DE COMBUSTIBLE, 2 PARA USAR EL RECOMENDADO");
+            editCombustible = entrada.nextInt();
+
+            if (editCombustible == 1) {
+                System.out.println("Ingresa el combustible a utilizar (en litros):");
+                double totalcombustible = entrada.nextDouble(); 
+                System.out.println("Ingresa el número de personas a bordo:");
+                double oxigeno = entrada.nextInt();
+                totalOxigeno = oxigeno * tiempoViajeTotalEnDias; // Calculamos el oxígeno necesario
+
+                System.out.println("Combustible ingresado: " + totalcombustible + " litros. Total Oxígeno necesario: " + totalOxigeno + " litros.");
+
+            } else if (editCombustible == 2) {
+                System.out.println("Ingresa el número de personas a bordo:");
+                double oxigeno = entrada.nextInt();
+                totalOxigeno = oxigeno * tiempoViajeTotalEnDias; // Calculamos el oxígeno necesario
+
+                System.out.println("\n =======INICIO DE VIAJE =======");
+
+                // Convertir la distancia del planeta de millones de km a kilómetros
+                double distanciaTotalkmh = distanciaPlane * 1.60934; // Convertimos la distancia de millones de km a km
+
+                // Calcular el combustible necesario
+                double consumoTotal = FACTOR_CONSUMO * distanciaTotalkmh; 
+                System.out.println("Combustible necesario para el viaje: " + consumoTotal + " litros de gas. Total Oxígeno necesario: " + totalOxigeno + " litros.");
+
+                // Mostrar el inicio del viaje
+                System.out.println("Comienza tu viaje hacia el planeta con una distancia de: " + distanciaTotalkmh + " km.");
+                System.out.println("Tiempo total de viaje estimado: " + tiempoViajeTotalEnDias + " días.");
+            } else {
+                System.out.println("Opción inválida, ingresa una opción entre 1 y 2.");
+            }
+        } while (editCombustible < 1 || editCombustible > 2);
+
+        ///////////////////////
+
+        tiempoTranscurrido = 0;
+
+        // Simulación del progreso del viaje
+        while (tiempoTranscurrido < tiempoViajeTotalEnDias) {
+            try {
+                Thread.sleep(1000); // Simula 1 día en 1 segundo
+                tiempoTranscurrido++;
+
+                // Calculamos el porcentaje de progreso
+                double progreso = (tiempoTranscurrido / tiempoViajeTotalEnDias) * 100;
+                System.out.printf("Progreso: %.2f%%\n", progreso);
+
+                // Mostrar eventos aleatorios durante el viaje
+                if (tiempoTranscurrido % 5 == 0) { // Evento aleatorio cada 5 días
+                    eventosAleatorios();
+                }
+
+                // Si ya hemos llegado a nuestro destino, mostramos un mensaje de éxito
+                if (progreso >= 100) {
+                    System.out.println("¡Has llegado a tu destino!");
+                    break;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        return tiempoTranscurrido;
+    }
 
-        String planetaSeleccionado = planetas[opcionPlaneta - 1];
-        double distancia = distancias[opcionPlaneta - 1] * 1_000_000; // Convertir a km
+    // Mostrar eventos aleatorios
+    public static void eventosAleatorios() {
+        int tipoEvento = random.nextInt(6) + 1; // Genera un número entre 1 y 6
 
-        // Selección de nave
-        int opcionNave = seleccionarNave();
-        if (opcionNave < 1 || opcionNave > 3) {
-            System.out.println("Opción inválida para la nave.");
-            return;
+        switch (tipoEvento) {
+            case 1:
+                System.out.println("¡Una tormenta espacial ha ocurrido! Se necesita ajustar la trayectoria.");
+                break;
+            case 2:
+                System.out.println("¡Has encontrado una nave alienígena! ¿Amistosa o hostil?");
+                break;
+            case 3:
+                System.out.println("¡El sistema de comunicación se ha averiado temporalmente!");
+                break;
+            case 4:
+                System.out.println("Revisa el combustible.");
+                break;
+            case 5:
+                System.out.println("Revisa las provisiones.");
+                break;
+            case 6:
+                System.out.println("¡Un evento inesperado ha ocurrido!");
+                break;
+            default:
+                break;
         }
-
-        String naveSeleccionada = naves[opcionNave - 1];
-        double velocidad = velocidades[opcionNave - 1];
-
-        // Calcular combustible necesario
-        double combustible = calcularCombustible(distancia);
-        double oxigeno = distancia / 50_000; // Ejemplo: 1 unidad de oxígeno por 50,000 km
-
-        System.out.println("Nave seleccionada: " + naveSeleccionada);
-        System.out.printf("Combustible necesario: %.2f unidades, Oxígeno necesario: %.2f unidades.\n", combustible, oxigeno);
-
-        // Monitorear el estado del viaje
-        monitorearViaje(distancia, velocidad, combustible, oxigeno);
     }
 }
+    
